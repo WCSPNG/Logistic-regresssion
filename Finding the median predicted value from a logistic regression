@@ -1,0 +1,31 @@
+library(MASS)
+library(ggplot2)
+
+# get Melanoma data from Program R data
+data(Melanoma)
+
+# check columns
+head(Melanoma)
+
+# logistic regression model
+ulceration = glm(ulcer ~ thickness ,family="binomial", data = Melanoma)
+
+# how thick does a median Melanoma have to be in order to ulcerate from package "MASS"
+M50 <- dose.p(ulceration,p=0.5)
+
+# logistic regression coefficients
+summary(ulceration)
+
+# fitted (predicted) values
+Melanoma$fitted <- fitted(ulceration)
+
+# plot predictions
+ggplot()+
+geom_point(data= Melanoma,aes(y= ulcer, x=thickness))+
+geom_line(data = Melanoma,aes(y= fitted, x=thickness), size=1, colour="red")+
+geom_vline(xintercept = M50[1])+
+theme_bw()+
+ylab(" Porbablity of ulceration")+
+xlab(" Melanoma thickness (mm)")+
+theme(axis.text.x = element_text(angle=90, hjust=1, vjust= 0.5))+
+theme(axis.title = element_text( face=2, size=12, vjust=0.3))
